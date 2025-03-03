@@ -1,4 +1,5 @@
 import 'package:LDS/Models/StaticAccount.dart';
+import 'package:LDS/Network/BaseURL.dart';
 import 'package:LDS/Widgets/colorTheme.dart';
 import 'package:flutter/material.dart';
 import 'package:LDS/Views/HomeView/navBar.dart';
@@ -20,6 +21,9 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _usernameController = TextEditingController();
+  TextEditingController _ipController = TextEditingController(text: "");
+  TextEditingController _portController = TextEditingController(text: "8090");
+
   String? _userType; // Stocker le type d'utilisateur sélectionné
 
   Future<void> _login() async {
@@ -47,6 +51,7 @@ class _LoginState extends State<Login> {
       Widget nextScreen = _userType == 'Student' ? NavBar() : NavBar();
       StaticAccount.staticAccount.role=_userType.toString();
       StaticAccount.staticAccount.name=_usernameController.text;
+      BaseURL.IP= _ipController.text;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => nextScreen),
@@ -153,6 +158,32 @@ class _LoginState extends State<Login> {
                                 ),
                               ),
                               SizedBox(height: 20),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(color: ColorTheme.firstColor),
+                                  ),
+                                ),
+                                child: TextFormField(
+                                  style: TextStyle(color: ColorTheme.firstColor),
+                                  controller: _ipController,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return ' Please enter your ip.';
+                                    }
+                                    if (value.length < 8) {
+                                      return 'The ip must contain at least 8 characters.';
+                                    }
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                    hintText: "Your ip",
+                                    hintStyle: TextStyle(color: Colors.grey),
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20,),
                               DropdownButtonFormField<String>(
                                 value: _userType,
                                 onChanged: (String? newValue) {
